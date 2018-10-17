@@ -1,2 +1,2 @@
 # FlatTree-Analysis
-C++ code for analysing tress created using CMSSW
+C++ code for analysing trees created using CMSSW in ROOT
