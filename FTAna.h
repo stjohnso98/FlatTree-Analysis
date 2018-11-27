@@ -862,10 +862,12 @@ public :
    int electron_candidate_index(double ef_leading,double ef_subleading);
    bool ElectronIsTight(int index);
    bool ElectronIsLoose(int index);
+   bool b_meson_mother(int MCIndex);
+   int match_index_jet_mc(int MCIndex);
  public:
    struct Hists {
      //Declare the histograms you want in here.
-     TH1F *ngoodele[6],*ptlep[6];
+     TH1F *ngoodele[6],*ptlep[8],*ngoodjet[2];
      TH1F *etmiss;
      TH1F *mass;
      TH2F *plots[30001];
@@ -887,7 +889,12 @@ public :
      float wt;
      int flavor;
      bool plot;
-   };   
+     bool b_tag;
+   };
+   struct Match {
+     double mindr;
+     int index;
+   };
  protected:
    Hists h;
 
@@ -910,6 +917,8 @@ public :
    void plot(Lepton ele,int plotno);
    double dr_pion_jet(Lepton pion,int match_index);
    int match_index_jet(Lepton pion);
+   bool b_tag(Lepton jet);
+   Match b_match(Lepton jet);
    ClassDef(FTAna,0);
 };
 
@@ -1345,7 +1354,34 @@ int FTAna::ReadLimited(int level, Long64_t entry)
   if(level==0){ GetEntry(entry); return 1; }
   if(level==1){
     //Turn on only those branches that we need
+    //Muon Variables
+    if(_sample==3){
+      b_NMuons->GetEntry(entry);
+      b_MuonPt->GetEntry(entry);
+      b_MuonEnergy->GetEntry(entry);
+      b_MuonEta->GetEntry(entry);
+      b_MuonPhi->GetEntry(entry);
+      b_METPt->GetEntry(entry);
+      b_METPhi->GetEntry(entry);
+    }
+    /* b_MuonPx->GetEntry(entry); */
+    /* b_MuonPy->GetEntry(entry); */
+    /* b_MuonPz->GetEntry(entry); */
    
+    /* b_MuonCharge->GetEntry(entry); */
+    /* b_MuonisPF->GetEntry(entry); */
+    /* b_MuonisGlobal->GetEntry(entry); */
+    /* b_MuonLMT->GetEntry(entry); */
+    /* b_MuonDxy->GetEntry(entry); */
+    /* b_MuonDz->GetEntry(entry); */
+    /* b_MuonpfIsolationR04sumChargedHadronPt->GetEntry(entry); */
+    /* b_MuonpfIsolationR04sumNeutralHadronEt->GetEntry(entry); */
+    /* b_MuonpfIsolationR04sumPhotonEt->GetEntry(entry); */
+    /* b_MuonpfIsolationR04sumPUPt->GetEntry(entry); */
+    /* b_MuonTrackIso->GetEntry(entry); */
+    /* b_MuonCaloIso->GetEntry(entry); */
+    /* b_MuonisStandAloneMuon->GetEntry(entry); */
+    /* //Met variables */
     
     b_NElectrons->GetEntry(entry);
     b_ElectronPt->GetEntry(entry);
