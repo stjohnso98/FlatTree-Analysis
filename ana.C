@@ -29,9 +29,22 @@ void ana(int sample)
     hstfilename = "real_ele_mc.root";
     sumfilename = "real_ele.txt";
   }
+   if(sample==2){
+    chain->Add("/home/dell/TTBar.root");
+    hstfilename = "TTbar.root";
+    sumfilename = "qcd_ele.txt";
+  }
+  if(sample==3){
+    //    chain->Add("fakeEleWithZ9.root");
+    //hstfilename = "fake_ele_withZ_cuts8.root";//output histogram file
+    //sumfilename = "fake_ele3_withZ.txt";
+    chain->Add("DYMC.root");
+    hstfilename = "fake_ele_mc2.root";
+    sumfilename = "fake_ele_mc.txt";
+  }
   if(sample==4){
-    chain->Add("/home/dell/DYQCD13.root");
-    hstfilename = "qcd_ele13.root";
+    chain->Add("/home/dell/TTBarLeptonic.root");
+    hstfilename = "TTbarleptonic.root";
     sumfilename = "qcd_ele.txt";
   }
 
