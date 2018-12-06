@@ -74,7 +74,7 @@ Bool_t FTAna::Process(Long64_t entry)
     if(_verbosity>1000 && nEvtTotal%10000==0)cout<<"Processed "<<nEvtTotal<<" event..."<<endl;      
     else if(_verbosity>0 && nEvtTotal%50000==0)cout<<"Processed "<<nEvtTotal<<" event..."<<endl;
   
-    //Your CODE starts here
+    // CODE starts here
     /* At the moment the code does the following.
        It loops over all electron candidates (NElectrons). 
        It creates a Lepton object from information about the electron
@@ -141,26 +141,26 @@ Bool_t FTAna::Process(Long64_t entry)
       h.ngoodele[1]->Fill((int)Ele.size());
       h.ngoodjet[0]->Fill(NJets);
       int b_count=0;
-      for(int i=0;i<NJets;i++){
+      for(int i=0;i<NJets;i++){ //Look at all jets
 	Lepton temp; temp.v.SetPxPyPzE(JetPx[i],JetPy[i],JetPz[i],JetEnergy[i]);
-	temp.ind=i;temp.b_tag=b_tag(temp);
+	temp.ind=i;temp.b_tag=b_tag(temp); // Check whether it is a b-jet
 	goodJet.push_back(temp);
 	h.ptlep[2]->Fill(temp.v.Pt());
-	if(temp.b_tag) b_count++;
+	if(temp.b_tag) b_count++; //Counting number of b-jets
       }
       h.ngoodjet[1]->Fill(b_count);
       if(_data==1){
 	int b_count_gen=0;
 	int b_meson_count_gen=0;
 	for(int i=0;i<NMC;i++){
-	  if(fabs(MCId[i])==5){
+	  if(fabs(MCId[i])==5){ // Plot observables of b
 	    b_count_gen++;
 	    h.ptlep[4]->Fill(MCPt[i]);
 	    h.motherid[1]->Fill(MCId[MCMotherIndex[i]]);
 	    int jet= match_index_jet_mc(i);
 	    h.ptlep[6]->Fill(MCPt[i]/JetPt[jet]);
 	  }
-	  if(fabs(MCId[i])>500 && fabs(MCId[i])<600 && b_meson_mother(i)){
+	  if(fabs(MCId[i])>500 && fabs(MCId[i])<600 && b_meson_mother(i)){ // Plot observables of b-meson
 	    b_meson_count_gen++;
 	    h.ptlep[5]->Fill(MCPt[i]);
 	    h.motherid[2]->Fill(MCId[MCMotherIndex[i]]);
@@ -198,7 +198,7 @@ Bool_t FTAna::Process(Long64_t entry)
 	  // int mother_index=MCMotherIndex[match_index];
 	  // int mother_id=MCId[mother_index]; //Find the mother of matching truth particle
 	  int match_jet=match_index_jet(Ele.at(i));
-	  if(match_jet != -1 && goodJet.at(match_jet).b_tag && goodJet.at(match_jet).ind==match_jet){
+	  if(match_jet != -1 && goodJet.at(match_jet).b_tag && goodJet.at(match_jet).ind==match_jet){ // Check if matched jet is a b-jet
 	    if(Ele.at(i).v.Pt()>10 && Ele.at(i).v.Pt()<30) {
 	      Ele.at(i).plot=true; // If the mother is not a Z or W boson and pT falls in the desired range, eta phi image of eletron is made
 	    }
@@ -207,7 +207,7 @@ Bool_t FTAna::Process(Long64_t entry)
 	  h.index[0]->Fill(MCId[match_index]); //Plot the matching truth particle index
 	}
       }
-      if(Ele.at(i).plot){
+      if(Ele.at(i).plot){ // Plot observables of selected electrons
 	h.eta->Fill(Ele.at(i).v.Eta());
 	float riso=ElectronPFIsolation[Ele.at(i).ind]/Ele.at(i).v.Pt();
 	float trkiso=ElectronTrackIso[Ele.at(i).ind];
@@ -250,7 +250,7 @@ Bool_t FTAna::Process(Long64_t entry)
   
     return kTRUE;
 }
-void FTAna::plot(Lepton ele,int plotno){
+void FTAna::plot(Lepton ele,int plotno){ //Creating plot of energy deposits
   for(int j=0;j<NTowers;j++){
     double deltaphi=delta_phi(ele.v.Phi(),TowerPhi[j]);
     double deltaeta=ele.v.Eta()-TowerEta[j];
@@ -266,8 +266,8 @@ void FTAna::plot(Lepton ele,int plotno){
   }
 }
 
-bool FTAna::pass_electron_cuts(int level, int i, TLorentzVector v)
-{
+bool FTAna::pass_electron_cuts(int level, int i, TLorentzVector v) 
+{ 
   //Apply selections based on the chosen level.
   bool result = false;
   if(level==10){
@@ -313,12 +313,12 @@ double FTAna::delta_phi(float phi1, float phi2)
   if(dphi>TMath::Pi()) dphi = 2*TMath::Pi() - dphi;
   return dphi;
 }
-double FTAna::deltaR(double deltaeta,double deltaphi){
+double FTAna::deltaR(double deltaeta,double deltaphi){ // Calculating DeltaR
   //double deltaeta=ele.Eta()-towereta;
   double deltar=sqrt(pow(deltaeta,2)+pow(deltaphi,2));
   return deltar;
 }
-int FTAna::electron_candidate_index(double ef_leading, double ef_subleading){//ef_leading=Em/Had
+int FTAna::electron_candidate_index(double ef_leading, double ef_subleading){//ef_leading=Em/Had Looking for energy fraction of leading and subleading electron
   if(ef_leading<0.4){
     h.ef[2]->Fill(ef_subleading);
     double ef=1/ef_subleading;
@@ -333,7 +333,7 @@ int FTAna::electron_candidate_index(double ef_leading, double ef_subleading){//e
   }
   else return -1;
 }
-int FTAna::get_match_index(Lepton ele){
+int FTAna::get_match_index(Lepton ele){ // MC match of electron
   int index=-1;
   double minDR=0.1;
   double minDpt=3;
@@ -353,7 +353,7 @@ int FTAna::get_match_index(Lepton ele){
   }
   return index;
 }
-int FTAna::match_index_jet(Lepton pion){
+int FTAna::match_index_jet(Lepton pion){ // Jet match of electron
   double mindr=0.5;
   int index=-1;
   for(int i=0;i<NJets;i++){
@@ -367,7 +367,7 @@ int FTAna::match_index_jet(Lepton pion){
   }
   return index;
 }
-int FTAna::match_index_jet_mc(int MCIndex){
+int FTAna::match_index_jet_mc(int MCIndex){ // Jet match of MC particles
   double mindr=0.5;
   int index=-1;
   for(int i=0;i<NJets;i++){
@@ -391,7 +391,7 @@ int FTAna::match_index_jet_mc(int MCIndex){
 //   else return 100;
 // }
 
-FTAna::Match FTAna::b_match(Lepton jet){
+FTAna::Match FTAna::b_match(Lepton jet){ // b match of jets
   double mindr=100;
   int index=-1;
   Match m;
@@ -410,7 +410,7 @@ FTAna::Match FTAna::b_match(Lepton jet){
   m.index=index;
   return m;
 }
-bool FTAna::b_tag(Lepton jet){
+bool FTAna::b_tag(Lepton jet){ //b tagging function
   Match m=b_match(jet);
   h.deltaR[2]->Fill(m.mindr);
   if(m.mindr<0.5){
@@ -419,14 +419,14 @@ bool FTAna::b_tag(Lepton jet){
   }
   return false;
 }
-bool FTAna::b_meson_mother(int MCIndex){
+bool FTAna::b_meson_mother(int MCIndex){ // Making sure that mother of b meson is not a b meson
   int mcid=MCId[MCIndex];
   int mother_index=MCMotherIndex[MCIndex];
   int mother_id=MCId[mother_index];
   if(fabs(mother_id)>500 && fabs(mother_id)<600) return false;
   else return true;
 }
-bool FTAna::ElectronIsTight(int index){
+bool FTAna::ElectronIsTight(int index){ //Tight selections for electrons
   bool isTightBarrel = ( fabs(ElectronsuperClustereta[index]) <=1.479 &&
 			 fabs(ElectrondeltaPhiSuperClusterTrackAtVtx[index]) < 0.03 &&
 			 ElectronnumberOfLostHits[index] <=0);
@@ -438,7 +438,7 @@ bool FTAna::ElectronIsTight(int index){
   return isTightBarrel || isTightEndcap;
 			 
 }
-bool FTAna::ElectronIsLoose(int index){
+bool FTAna::ElectronIsLoose(int index){ //Loose selections for electrons
   bool isLooseBarrel = ( fabs(ElectronsuperClustereta[index]) <= 1.479 &&
 			 fabs(ElectrondeltaEtaSuperClusterTrackAtVtx[index]) <0.007 &&
 			 fabs(ElectrondeltaPhiSuperClusterTrackAtVtx[index]) < 0.15 &&
@@ -460,7 +460,7 @@ bool FTAna::ElectronIsLoose(int index){
 			 ElectronnumberOfLostHits[index] <=1);
   return isLooseBarrel || isLooseEndcap;
 }
-void FTAna::BookHistograms()
+void FTAna::BookHistograms() 
 {
   // Booking syntax for histogram pointers (that we declared in struct Hists in header)
   // obj = new CLASS("localname","Histogram title",NumberOfBins,LowerEdge,HigherEdge)
