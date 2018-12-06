@@ -1,3 +1,4 @@
+// This code loops over all images plotted from ElectronTree using FlatTree Analysis, process and saves them
 #include "TFile.h"
 #include "TH1.h"
 #include "TCanvas.h"
